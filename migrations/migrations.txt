@@ -1,0 +1,25 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  password_hash TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  amount DECIMAL(10, 2),
+  category VARCHAR(50),
+  type VARCHAR(10),  -- 'income' or 'expense'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE budgets (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  amount DECIMAL(10, 2),
+  category VARCHAR(50),
+  start_date DATE,
+  end_date DATE
+);
