@@ -9,12 +9,12 @@
     let transaction;
 
     const getUserByID = async () => {
-        const res = fetch(`http://localhost:8080/api/user/:${userId}`);
+        const res = fetch(`http://localhost:3030/api/user/${userId}`);
         user = (await res).json();
     }
 
     const getTransactionById = async () => {
-        const res = fetch(`http://localhost:8080/api/transaction/:${transactionId}`);
+        const res = fetch(`http://localhost:8080/api/transaction/${transactionId}`);
         transaction = (await res).json();
     }
 

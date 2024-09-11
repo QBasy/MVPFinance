@@ -1,41 +1,69 @@
 <script>
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import logo from '$lib/images/svelte-logo.svg';
 	import github from '$lib/images/github.svg';
-	const user = async () => {
-		return {
-			user : ""
+
+	let user;
+	let userId;
+
+	const getToken = () => localStorage.getItem('jwtToken');
+
+	const getUserByID = async () => {
+		if (!userId) return;
+
+		const token = getToken();
+		const res = await fetch(`http://localhost:3030/api/user/${userId}`, {
+			headers: {
+				'Authorization': `Bearer ${token}`
+			}
+		});
+
+		if (res.ok) {
+			user = await res.json();
+		} else {
+			console.error('Failed to fetch user:', res.statusText);
 		}
-	}
+	};
+
+	// Use reactive statement to get userId from URL params
+	$: userId = $page.params.userId;
+
+	// Fetch user data when component mounts
+	onMount(() => {
+		if (userId) {
+			getUserByID();
+		}
+	});
 </script>
 
 <header>
-		<nav>
-			{#if user() == null}
-				<ul>
-					<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-						<a href="/">Home</a>
-					</li>
-					<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
-						<a href="/auth">Login/Registration</a>
-					</li>
-					<li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
-						<a href="/">Sverdle</a>
-					</li>
-				</ul>
-			{:else if user() }
-				<ul>
-					<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-						<a href="/">Home</a>
-					</li>
-					<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
-						<a href="/user">Profile</a>
-					</li>
-					<li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
-						<a href="/">Sverdle</a>
-					</li>
-				</ul>
-			{/if}
+	<nav>
+		{#if user == null}
+			<ul>
+				<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
+					<a href="/">Home</a>
+				</li>
+				<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
+					<a href="/auth">Login/Registration</a>
+				</li>
+				<li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
+					<a href="/">Sverdle</a>
+				</li>
+			</ul>
+		{:else}
+			<ul>
+				<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
+					<a href="/">Home</a>
+				</li>
+				<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
+					<a href="/user">Profile</a>
+				</li>
+				<li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
+					<a href="/">Sverdle</a>
+				</li>
+			</ul>
+		{/if}
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
 		</svg>
