@@ -6,11 +6,11 @@ import (
 )
 
 type User struct {
-	ID           int       `json:"id"`            // ID is the primary key of the user
-	Name         string    `json:"name"`          // Name of the user
-	Email        string    `json:"email"`         // Email of the user (must be unique)
-	PasswordHash string    `json:"password_hash"` // PasswordHash is the hashed password for the user
-	CreatedAt    time.Time `json:"created_at"`    // CreatedAt is the timestamp when the user was created
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 func CreateUser(user User) (int, error) {
