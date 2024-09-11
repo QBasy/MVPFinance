@@ -3,6 +3,7 @@ package handlers
 import (
 	"MVPFinanceApp/api/models"
 	"MVPFinanceApp/db"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -27,6 +28,33 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(t)
+}
+
+func GetTransaction(w http.ResponseWriter, r *http.Request) {
+	userID := r.URL.Query().Get("user_id")
+	transactionID := r.URL.Query().Get("transaction_id")
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
+	row, err := db.DB.Query("SELECT id, amount, category, type, created_at FROM transactions WHERE user_id = $1 and transactions.id = $2", userID, transactionID)
+	if err != nil {
+		http.Error(w, "Failed to fetch transaction", http.StatusInternalServerError)
+	}
+
+	defer func(row *sql.Rows) {
+		_ = row.Close()
+	}(row)
+
+	var transaction models.Transaction
+	if err := row.Scan(&transaction.ID, &transaction.Category, &transaction.Type, &transaction.CreatedAt); err != nil {
+		http.Error(w, "Failed to parse transaction", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(transaction)
 }
 
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
@@ -54,5 +82,5 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(transactions)
+	_ = json.NewEncoder(w).Encode(transactions)
 }

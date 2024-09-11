@@ -14,8 +14,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Remove 'Bearer ' from the start of the token
-		tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
+		tokenStr = strings.TrimPrefix(tokenStr, "")
 
 		_, err := utils.ParseToken(tokenStr)
 		if err != nil {

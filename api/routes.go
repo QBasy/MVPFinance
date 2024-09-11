@@ -15,7 +15,9 @@ func SetupRoutes() *mux.Router {
 	// Protected routes
 	router.Use(middleware.AuthMiddleware)
 
-	router.HandleFunc("/transactions", handlers.CreateTransaction).Methods("POST")
+	router.HandleFunc("/transaction", handlers.GetTransaction).Methods("GET")
+	router.HandleFunc("/transaction", handlers.CreateTransaction).Methods("POST")
+
 	router.HandleFunc("/transactions", handlers.GetTransactions).Methods("GET")
 
 	return router
